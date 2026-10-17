@@ -6,11 +6,14 @@ echo '<h1>Lab 2C: User and Tutor Classes</h1>';
 
 function cleanText($value)
 {
-    // TODO: Return the value with extra spaces removed.
+    // trim() removes spaces from the start and end.
+    // preg_replace() replaces any run of spaces inside the text with one space.
+    return preg_replace('/\s+/', ' ', trim($value));
 }
 
 class User
 {
+    // A class constant has no $ and cannot be changed.
     public const STATUS_ACTIVE = 'active';
 
     public $name;
@@ -19,27 +22,36 @@ class User
 
     public function __construct($name, $email)
     {
-        // TODO: Clean and store the name.
-        // TODO: Clean, lowercase, and store the email.
-        // TODO: Assign STATUS_ACTIVE to status.
+        $this->name = cleanText($name);
+        $this->email = strtolower(cleanText($email));
+
+        // self:: accesses a constant defined in this class.
+        $this->status = self::STATUS_ACTIVE;
     }
 }
 
+// Tutor inherits name, email, status, and the constructor logic from User.
 class Tutor extends User
 {
     public $subject;
 
     public function __construct($name, $email, $subject)
     {
-        // TODO: Call the parent constructor.
-        // TODO: Clean and store the subject.
+        // Run User's constructor so name, email, and status are set.
+        parent::__construct($name, $email);
+
+        $this->subject = cleanText($subject);
     }
 
     public function profileSummary()
     {
-        // TODO: Return the tutor's name, email, and subject.
+        return "Tutor: $this->name | Email: $this->email | Subject: $this->subject | Status: $this->status";
     }
 }
 
-// TODO: Create a Tutor object using sample data.
-// TODO: Display profileSummary().
+// Sample data includes extra spaces and mixed-case email on purpose
+// to show that the constructor cleans them.
+$tutor = new Tutor('  Maya    Chen ', '  Maya.Chen@Example.COM ', ' IS 6465   Web Based Applications ');
+
+// htmlspecialchars() escapes the output before it reaches the browser.
+echo htmlspecialchars($tutor->profileSummary()) . '<br>';
